@@ -1,7 +1,4 @@
-import {
-  useState,
-  useEffect,
-} from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
   question: any;
@@ -14,7 +11,6 @@ export default function MCQCard({
   onCorrect,
   onIncorrect,
 }: Props) {
-
   const [selected, setSelected] =
     useState<number | null>(null);
 
@@ -27,14 +23,12 @@ export default function MCQCard({
   }, [question]);
 
   const handleSubmit = () => {
-
     if (selected === null) return;
 
     setSubmitted(true);
 
     if (
-      selected ===
-      question.correctAnswer
+      selected === question.correctAnswer
     ) {
       onCorrect();
     } else {
@@ -43,8 +37,7 @@ export default function MCQCard({
   };
 
   const isCorrect =
-    selected ===
-    question.correctAnswer;
+    selected === question.correctAnswer;
 
   return (
     <div
@@ -101,7 +94,7 @@ export default function MCQCard({
       </button>
 
       {submitted && (
-        <>
+        <div style={{ marginTop: "20px" }}>
           <h2
             style={{
               color: isCorrect
@@ -114,13 +107,85 @@ export default function MCQCard({
               : "❌ Incorrect"}
           </h2>
 
-          <h3>Explanation</h3>
+          <h3>📖 Explanation</h3>
 
           <p>
             {question.explanation}
           </p>
-        </>
+
+          {question.pearls &&
+            question.pearls.length > 0 && (
+              <div>
+                <h3
+                  style={{
+                    color: "#22c55e",
+                  }}
+                >
+                  🎯 High Yield Pearls
+                </h3>
+
+                {question.pearls.map(
+                  (
+                    pearl: string,
+                    index: number
+                  ) => (
+                    <div
+                    
+key={index}
+                      style={{
+                        background:
+                          "#1e293b",
+                        padding: "12px",
+                        borderRadius:
+                          "8px",
+                        marginBottom:
+                          "8px",
+                      }}
+                    >
+                      ✅ {pearl}
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+
+          {question.tips &&
+            question.tips.length > 0 && (
+              <div>
+                <h3
+                  style={{
+                    color: "#60a5fa",
+                  }}
+                >
+                  💡 NEET-PG Tips
+                </h3>
+
+                {question.tips.map(
+                  (
+                    tip: string,
+                    index: number
+                  ) => (
+                    <div
+                      key={index}
+                      style={{
+                        background:
+                          "#1e40af",
+                        padding: "12px",
+                        borderRadius:
+                          "8px",
+                        marginBottom:
+                          "8px",
+                      }}
+                    >
+                      💡 {tip}
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+        </div>
       )}
     </div>
   );
 }
+

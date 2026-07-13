@@ -13,6 +13,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
           temperature: 0.3,
+
           messages: [
             {
               role: "system",
@@ -26,28 +27,46 @@ Format:
   "subject":"Medicine",
   "topic":"${topic}",
   "difficulty":"Hard",
+
   "question":"Question text",
-  "options":["A","B","C","D"],
-  "correctAnswer":0,
-  "explanation":"Explanation",
-  "optionExplanations":[
-   "Correct",
-   "Wrong",
-   "Wrong",
-   "Wrong"
+
+  "options":[
+    "A",
+    "B",
+    "C",
+    "D"
   ],
-  "pearls":["High Yield Pearl"],
-  "tips":["NEET-PG Tip"]
+
+  "correctAnswer":0,
+
+  "explanation":"Detailed educational explanation",
+
+  "optionExplanations":[
+    "Correct",
+    "Wrong",
+    "Wrong",
+    "Wrong"
+  ],
+
+  "pearls":[
+    "One important NEET-PG pearl"
+  ],
+
+  "tips":[
+    "One NEET-PG exam tip"
+  ]
 }
 
+JSON only.
 No markdown.
 No code fences.
-JSON only.
 `
             },
+
             {
               role: "user",
-              content: `Generate ONE difficult NEET-PG question on ${topic}`
+              content:
+                `Generate ONE difficult NEET-PG level question on ${topic}`
             }
           ]
         })
