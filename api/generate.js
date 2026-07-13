@@ -12,53 +12,20 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-
           messages: [
             {
               role: "system",
               content: `
-Generate difficult NEET-PG level MCQs.
+Generate NEET-PG MCQs.
 
 Return ONLY valid JSON.
-
-Format:
-
-[
- {
-  "id":"1",
-  "subject":"Medicine",
-  "topic":"Cardiology",
-  "difficulty":"Hard",
-  "question":"Question text",
-  "options":["A","B","C","D"],
-  "correctAnswer":0,
-  "explanation":"Detailed explanation",
-  "optionExplanations":[
-   "Correct",
-   "Wrong",
-   "Wrong",
-   "Wrong"
-  ],
-  "pearls":[
-   "High Yield Pearl"
-  ],
-  "tips":[
-   "NEET-PG Tip"
-  ]
- }
-]
-
-Return JSON only.
-No markdown.
-No code blocks.
 `
             },
             {
               role: "user",
-              content: `Generate ${count} NEET-PG questions on ${topic}`
+              content: `Generate ${count} MCQs on ${topic}`
             }
           ],
-
           temperature: 0.7
         })
       }
@@ -66,20 +33,25 @@ No code blocks.
 
     const data = await response.json();
 
-    const content =
-      data.choices[0].message.content;
+    console.log(
+      "Groq Response:",
+      JSON.stringify(data, null, 2)
+    );
 
-    const questions =
-      JSON.parse(content);
+    if (!data.choices) {
+      return res.status(500).json({
+        error: data
+      });
+    }
 
-    res.status(200).json(questions);
+    res.status(200).json(data);
 
   } catch (error) {
 
     console.error(error);
 
     res.status(500).json({
-      error: "Failed to generate questions"
+      error: error.message
     });
 
   }
