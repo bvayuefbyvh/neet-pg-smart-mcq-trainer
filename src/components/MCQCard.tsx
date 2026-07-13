@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 
+
 interface Props {
   question: any;
   onCorrect: () => void;
-  onIncorrect: () => void;
 }
 
 export default function MCQCard({
   question,
   onCorrect,
-  onIncorrect,
 }: Props) {
   const [selected, setSelected] =
     useState<number | null>(null);
@@ -17,6 +16,7 @@ export default function MCQCard({
   const [submitted, setSubmitted] =
     useState(false);
 
+  // RESET WHEN QUESTION CHANGES
   useEffect(() => {
     setSelected(null);
     setSubmitted(false);
@@ -31,8 +31,6 @@ export default function MCQCard({
       selected === question.correctAnswer
     ) {
       onCorrect();
-    } else {
-      onIncorrect();
     }
   };
 
@@ -51,10 +49,7 @@ export default function MCQCard({
       <h2>{question.question}</h2>
 
       {question.options.map(
-        (
-          option: string,
-          index: number
-        ) => (
+        (option: string, index: number) => (
           <button
             key={index}
             onClick={() =>
@@ -77,7 +72,6 @@ export default function MCQCard({
                   : "#555",
 
               color: "white",
-
               cursor: submitted
                 ? "default"
                 : "pointer",
@@ -113,85 +107,73 @@ export default function MCQCard({
               : "❌ Incorrect"}
           </h2>
 
-          <h3>Explanation</h3>
+          <h3>Explanation:</h3>
 
           <p>
             {question.explanation}
           </p>
 
-          {question.pearls?.length >
-            0 && (
-            <>
-              <h3
-                style={{
-                  color:
-                    "#22c55e",
-                }}
-              >
-                High Yield Pearls
-              </h3>
+          <h3
+            style={{
+              color: "#22c55e",
+            }}
+          >
+            High Yield Pearls
+          </h3>
 
-              {question.pearls.map(
-                (
-                  pearl: string,
-                  index: number
-                ) => (
-                  <div
-                    key={index}
-                    style={{
-                      background:
-                        "#1e293b",
-                      padding:
-                        "12px",
-                      borderRadius:
-                        "8px",
-                      marginBottom:
-                        "8px",
-                    }}
-                  >
-                    ✅ {pearl}
-                  </div>
-                )
-              )}
-            </>
-          )}
+          <div>
+            {question.pearls?.map(
+              (
+                pearl: string,
+                index: number
+              ) => (
+                <div
+                  key={index}
+                  style={{
+                    background:
+                      "#1e293b",
+                    padding: "12px",
+                    borderRadius: "8px",
+                    marginBottom:
+                      "8px",
+                  }}
+                >
+                  ✅ {pearl}
+                </div>
+              )
+            )}
+          </div>
 
-          {question.tips?.length >
-            0 && (
-            <>
-              <h3
-                style={{
-                  color:
-                    "#60a5fa",
-                }}
-              >
-                NEET-PG Tips
-              </h3>
+          <h3
+            style={{
+              color: "#60a5fa",
+            }}
+          >
+            NEET-PG Tips
+          </h3>
 
-              {question.tips.map(
-                (
-                  tip: string,
-                  index: number
-                ) => (
-                  <div
-                    key={index}
-                    style={{
-                      background:
-                        "#1e40af",
-                      padding:
-                        "12px",
-                      borderRadius:
-                        "8px",
-                      marginBottom:
-                        "8px",
-                    }}
-                  >
-                    💡 {tip}
-                  </div>
-                )
-              )}
-            </>
-          )}
+          <div>
+            {question.tips?.map(
+              (
+                tip: string,
+                index: number
+              ) => (
+                <div
+                  key={index}
+                  style={{
+                    background:
+                      "#1e40af",
+                    padding: "12px",
+                    borderRadius: "8px",
+                    marginBottom:
+                      "8px",
+                  }}
+                >
+                  💡 {tip}
+                </div>
+              )
+            )}
+          </div>
         </>
       )}
     </div>
