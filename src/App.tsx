@@ -32,7 +32,7 @@ export default function App() {
       const result =
         await generateAIQuestions(
           topic,
-          5
+          3
         );
 
       setQuestions(result);
