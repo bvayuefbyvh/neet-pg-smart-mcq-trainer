@@ -1,41 +1,50 @@
-import { useState, useEffect } from "react";
-
+import {
+  useState,
+  useEffect,
+} from "react";
 
 interface Props {
   question: any;
   onCorrect: () => void;
+  onIncorrect: () => void;
 }
 
 export default function MCQCard({
   question,
   onCorrect,
+  onIncorrect,
 }: Props) {
+
   const [selected, setSelected] =
     useState<number | null>(null);
 
   const [submitted, setSubmitted] =
     useState(false);
 
-  // RESET WHEN QUESTION CHANGES
   useEffect(() => {
     setSelected(null);
     setSubmitted(false);
   }, [question]);
 
   const handleSubmit = () => {
+
     if (selected === null) return;
 
     setSubmitted(true);
 
     if (
-      selected === question.correctAnswer
+      selected ===
+      question.correctAnswer
     ) {
       onCorrect();
+    } else {
+      onIncorrect();
     }
   };
 
   const isCorrect =
-    selected === question.correctAnswer;
+    selected ===
+    question.correctAnswer;
 
   return (
     <div
@@ -49,7 +58,10 @@ export default function MCQCard({
       <h2>{question.question}</h2>
 
       {question.options.map(
-        (option: string, index: number) => (
+        (
+          option: string,
+          index: number
+        ) => (
           <button
             key={index}
             onClick={() =>
@@ -61,7 +73,6 @@ export default function MCQCard({
               width: "100%",
               marginTop: "10px",
               padding: "12px",
-
               background:
                 submitted &&
                 index ===
@@ -70,11 +81,7 @@ export default function MCQCard({
                   : selected === index
                   ? "#2563eb"
                   : "#555",
-
               color: "white",
-              cursor: submitted
-                ? "default"
-                : "pointer",
             }}
           >
             {option}
@@ -107,73 +114,11 @@ export default function MCQCard({
               : "❌ Incorrect"}
           </h2>
 
-          <h3>Explanation:</h3>
+          <h3>Explanation</h3>
 
           <p>
             {question.explanation}
           </p>
-
-          <h3
-            style={{
-              color: "#22c55e",
-            }}
-          >
-            High Yield Pearls
-          </h3>
-
-          <div>
-            {question.pearls?.map(
-              (
-                pearl: string,
-                index: number
-              ) => (
-                <div
-                  key={index}
-                  style={{
-                    background:
-                      "#1e293b",
-                    padding: "12px",
-                    borderRadius: "8px",
-                    marginBottom:
-                      "8px",
-                  }}
-                >
-                  ✅ {pearl}
-                </div>
-              )
-            )}
-          </div>
-
-          <h3
-            style={{
-              color: "#60a5fa",
-            }}
-          >
-            NEET-PG Tips
-          </h3>
-
-          <div>
-            {question.tips?.map(
-              (
-                tip: string,
-                index: number
-              ) => (
-                <div
-                  key={index}
-                  style={{
-                    background:
-                      "#1e40af",
-                    padding: "12px",
-                    borderRadius: "8px",
-                    marginBottom:
-                      "8px",
-                  }}
-                >
-                  💡 {tip}
-                </div>
-              )
-            )}
-          </div>
         </>
       )}
     </div>

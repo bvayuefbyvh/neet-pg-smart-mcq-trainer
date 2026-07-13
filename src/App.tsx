@@ -2,94 +2,80 @@ import { useState } from "react";
 
 import MCQCard from "./components/MCQCard";
 import Dashboard from "./components/Dashboard";
-import ProgressBar from "./components/ProgressBar";
 
-
-import { generateAIQuestions } from "./services/generateAIQuestions";
+import {
+  generateAIQuestions,
+} from "./services/generateAIQuestions";
 
 export default function App() {
-  const [topic, setTopic] = useState("");
 
-  const [questions, setQuestions] =
-    useState<any[]>([]);
+  const [topic, setTopic] =
+    useState("");
 
-  const [currentIndex, setCurrentIndex] =
-    useState(0);
+  const [question, setQuestion] =
+    useState<any>(null);
 
   const [score, setScore] =
     useState(0);
 
-  const [answered, setAnswered] =
+  const [attempted, setAttempted] =
     useState(0);
 
   const [loading, setLoading] =
     useState(false);
 
-  async function generate() {
+  async function loadQuestion() {
+
     try {
+
       setLoading(true);
 
       const result =
         await generateAIQuestions(
-          topic,
-          3
+          topic
         );
 
-      setQuestions(result);
+      setQuestion(result);
 
-      setCurrentIndex(0);
-      setScore(0);
-      setAnswered(0);
     } catch (error) {
+
       console.error(error);
 
       alert(
         "Question generation failed"
       );
+
     } finally {
+
       setLoading(false);
+
     }
   }
 
-  function restartTest() {
-    setQuestions([]);
-    setCurrentIndex(0);
-    setScore(0);
-    setAnswered(0);
-    setTopic("");
-  }
-
-  const currentQuestion =
-    questions[currentIndex];
-
   const accuracy =
-    answered > 0
+    attempted > 0
       ? Math.round(
-          (score / answered) * 100
+          (score / attempted) * 100
         )
       : 0;
 
   const handleCorrect = () => {
-    setScore((prev) => prev + 1);
-  };
 
-  const nextQuestion = () => {
-    setAnswered(
+    setScore(
       (prev) => prev + 1
     );
 
-    setCurrentIndex((prev) =>
-      Math.min(
-        prev + 1,
-        questions.length - 1
-      )
+    setAttempted(
+      (prev) => prev + 1
     );
   };
 
-  const isFinished =
-    questions.length > 0 &&
-    currentIndex ===
-      questions.length - 1;
+  const handleIncorrect = () => {
+
+    setAttempted(
+      (prev) => prev + 1
+    );
+  };
 
   return (
     <div
@@ -108,15 +94,6 @@ export default function App() {
         🩺 AI NEET-PG Trainer
       </h1>
 
-      <h3
-        style={{
-          textAlign: "center",
-          color: "#9ca3af",
-        }}
-      >
-        AI Powered Medical Question Generator
-      </h3>
-
       <input
         value={topic}
         onChange={(e) =>
@@ -128,128 +105,50 @@ export default function App() {
         style={{
           width: "100%",
           padding: "12px",
-          marginTop: "20px",
         }}
       />
 
       <button
-        onClick={generate}
+        onClick={loadQuestion}
         disabled={loading}
         style={{
-          marginTop: "15px",
+          marginTop: "20px",
           padding: "12px 24px",
-          marginRight: "10px",
         }}
       >
         {loading
           ? "Generating..."
-          : "Generate Questions"}
-      </button>
-
-      <button
-        onClick={restartTest}
-        style={{
-          marginTop: "15px",
-          padding: "12px 24px",
-          background: "#dc2626",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        Restart Test
+          : "Generate Question"}
       </button>
 
       <Dashboard
         score={score}
-        attempted={answered}
+        attempted={attempted}
         accuracy={accuracy}
       />
 
-      {questions.length > 0 && (
+      {question && (
         <>
-          <ProgressBar
-            current={
-              currentIndex + 1
-            }
-            total={
-              questions.length
-            }
-          />
-
-          <h2
-            style={{
-              textAlign: "center",
-              marginTop: "20px",
-            }}
-          >
-            Question{" "}
-            {currentIndex + 1}
-            / {questions.length}
-          </h2>
-
           <MCQCard
-            question={
-              currentQuestion
-            }
+            question={question}
             onCorrect={
               handleCorrect
             }
+            onIncorrect={
+              handleIncorrect
+            }
           />
 
-          {!isFinished && (
-            <button
-              onClick={
-                nextQuestion
-              }
-              style={{
-                marginTop: "20px",
-                padding: "12px 24px",
-              }}
-            >
-              Next Question
-            </button>
-          )}
-
-          {isFinished && (
-            <div
-              style={{
-                marginTop: "30px",
-                textAlign: "center",
-              }}
-            >
-              <h2>
-                🎉 Test Completed
-              </h2>
-
-              <h3>
-                Score: {score}
-              </h3>
-
-              <h3>
-                Accuracy: {accuracy}%
-              </h3>
-
-              <button
-                onClick={
-                  restartTest
-                }
-                style={{
-                  marginTop: "15px",
-                  padding:
-                    "12px 24px",
-                  background:
-                    "#16a34a",
-                  color:
-                    "white",
-                  border:
-                    "none",
-                }}
-              >
-                Start New Test
-              </button>
-            </div>
-          )}
+          <button
+            onClick={loadQuestion}
+            style={{
+              marginTop: "20px",
+              padding:
+                "12px 24px",
+            }}
+          >
+            Next Question
+          </button>
         </>
       )}
     </div>
