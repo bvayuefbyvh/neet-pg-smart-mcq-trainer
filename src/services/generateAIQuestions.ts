@@ -1,5 +1,6 @@
 export async function generateAIQuestions(
-  topic: string
+  topic: string,
+  difficulty: string
 ) {
   const response = await fetch(
     "/api/generate",
@@ -11,6 +12,7 @@ export async function generateAIQuestions(
       },
       body: JSON.stringify({
         topic,
+        difficulty,
       }),
     }
   );

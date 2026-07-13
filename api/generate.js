@@ -1,6 +1,9 @@
 export default async function handler(req, res) {
   try {
-    const { topic } = req.body;
+    const {
+      topic,
+      difficulty = "Random",
+    } = req.body;
 
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -12,6 +15,7 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
+
           temperature: 0.3,
 
           messages: [
@@ -26,32 +30,25 @@ Format:
   "id":"1",
   "subject":"Medicine",
   "topic":"${topic}",
-  "difficulty":"Hard",
-
+  "difficulty":"${difficulty}",
   "question":"Question text",
-
   "options":[
     "A",
     "B",
     "C",
     "D"
   ],
-
   "correctAnswer":0,
-
-  "explanation":"Detailed educational explanation",
-
+  "explanation":"Detailed explanation",
   "optionExplanations":[
     "Correct",
     "Wrong",
     "Wrong",
     "Wrong"
   ],
-
   "pearls":[
     "One important NEET-PG pearl"
   ],
-
   "tips":[
     "One NEET-PG exam tip"
   ]
@@ -62,34 +59,55 @@ No markdown.
 No code fences.
 `
             },
-
             {
               role: "user",
-              content:
-                `Generate ONE difficult NEET-PG level question on ${topic}`
+              content: `
+Generate ONE NEET-PG / INI-CET question.
+
+Topic:
+${topic}
+
+Difficulty:
+${difficulty}
+
+Difficulty Guidelines:
+
+Easy:
+- Basic MBBS concepts
+- Direct recall
+
+Medium:
+- Regular NEET-PG level
+- Clinical application
+
+Hard:
+- Advanced clinical reasoning
+- Integrated concepts
+- INI-CET style
+
+Random:
+- Randomly choose Easy, Medium or Hard
+
+Return ONLY valid JSON.
+`
             }
           ]
         })
       }
     );
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
     const content =
       data?.choices?.[0]?.message?.content?.trim();
 
-    if (!content) {
-      return res.status(500).json({
-        error: "No content returned"
-      });
-    }
-
     const question =
       JSON.parse(content);
 
-    return res.status(200).json(
-      question
-    );
+    return res
+      .status(200)
+      .json(question);
 
   } catch (error) {
 
@@ -98,7 +116,7 @@ No code fences.
     return res.status(500).json({
       error:
         error.message ||
-        "Generation failed"
+        "Generation failed",
     });
 
   }

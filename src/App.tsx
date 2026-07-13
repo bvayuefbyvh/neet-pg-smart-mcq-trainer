@@ -12,6 +12,9 @@ export default function App() {
   const [topic, setTopic] =
     useState("");
 
+  const [difficulty, setDifficulty] =
+    useState("Random");
+
   const [question, setQuestion] =
     useState<any>(null);
 
@@ -32,7 +35,8 @@ export default function App() {
 
       const result =
         await generateAIQuestions(
-          topic
+          topic,
+          difficulty
         );
 
       setQuestion(result);
@@ -55,7 +59,8 @@ export default function App() {
   const accuracy =
     attempted > 0
       ? Math.round(
-          (score / attempted) * 100
+          (score / attempted) *
+            100
         )
       : 0;
 
@@ -108,6 +113,36 @@ export default function App() {
         }}
       />
 
+      <select
+        value={difficulty}
+        onChange={(e) =>
+          setDifficulty(
+            e.target.value
+          )
+        }
+        style={{
+          width: "100%",
+          padding: "12px",
+          marginTop: "10px",
+        }}
+      >
+        <option>
+          Random
+        </option>
+
+        <option>
+          Easy
+        </option>
+
+        <option>
+          Medium
+        </option>
+
+        <option>
+          Hard
+        </option>
+      </select>
+
       <button
         onClick={loadQuestion}
         disabled={loading}
@@ -129,6 +164,18 @@ export default function App() {
 
       {question && (
         <>
+          <div
+            style={{
+              marginTop: "20px",
+              color: "#fbbf24",
+              fontWeight: "bold",
+            }}
+          >
+            Difficulty:
+            {" "}
+            {question.difficulty}
+          </div>
+
           <MCQCard
             question={question}
             onCorrect={
@@ -140,7 +187,9 @@ export default function App() {
           />
 
           <button
-            onClick={loadQuestion}
+            onClick={
+              loadQuestion
+            }
             style={{
               marginTop: "20px",
               padding:
