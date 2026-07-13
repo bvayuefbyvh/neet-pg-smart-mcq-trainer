@@ -1,20 +1,16 @@
 export async function generateAIQuestions(
-  topic: string,
-  count = 10
+  topic: string
 ) {
   const response = await fetch(
     "/api/generate",
     {
       method: "POST",
-
       headers: {
         "Content-Type":
           "application/json",
       },
-
       body: JSON.stringify({
         topic,
-        count,
       }),
     }
   );
@@ -27,3 +23,4 @@ export async function generateAIQuestions(
 
   return response.json();
 }
+``

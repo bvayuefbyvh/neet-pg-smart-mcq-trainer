@@ -17,41 +17,37 @@ export default async function handler(req, res) {
             {
               role: "system",
               content: `
-Generate ONE difficult NEET-PG MCQ.
-
 Return ONLY valid JSON.
 
 Format:
 
-[
- {
+{
   "id":"1",
   "subject":"Medicine",
-  "topic":"${topic}",
+  "topic":"Cardiology",
   "difficulty":"Hard",
   "question":"Question text",
   "options":["A","B","C","D"],
   "correctAnswer":0,
   "explanation":"Explanation",
   "optionExplanations":[
-   "Correct",
-   "Wrong",
-   "Wrong",
-   "Wrong"
+    "Correct",
+    "Wrong",
+    "Wrong",
+    "Wrong"
   ],
   "pearls":["High Yield Pearl"],
   "tips":["NEET-PG Tip"]
- }
-]
+}
 
+Return JSON only.
 No markdown.
-No code fences.
-No extra text.
+No code blocks.
 `
             },
             {
               role: "user",
-              content: `Generate 1 difficult NEET-PG question on ${topic}`
+              content: `Generate ONE difficult NEET-PG question on ${topic}`
             }
           ],
 
@@ -62,71 +58,19 @@ No extra text.
 
     const data = await response.json();
 
-    if (!data?.choices?.[0]?.message?.content) {
-      console.log(data);
-
-      return res.status(500).json({
-        error: "Invalid Groq response"
-      });
-    }
-
     const content =
-      data.choices[0].message.content
-        .trim();
+      data?.choices?.[0]?.message?.content?.trim();
 
-    try {
-      const questions =
-        JSON.parse(content);
+    const question =
+      JSON.parse(content);
 
-      return res.status(200).json(
-        questions
-      );
-
-    } catch (err) {
-
-      console.error(
-        "Bad JSON from Groq:",
-        content
-      );
-
-      return res.status(200).json([
-        {
-          id: "fallback",
-          subject: "Medicine",
-          topic,
-          difficulty: "Medium",
-          question:
-            "AI could not generate a valid question. Please click Generate Questions again.",
-          options: [
-            "Retry",
-            "Retry",
-            "Retry",
-            "Retry"
-          ],
-          correctAnswer: 0,
-          explanation:
-            "Groq returned invalid JSON.",
-          optionExplanations: [
-            "",
-            "",
-            "",
-            ""
-          ],
-          pearls: [
-            "Retry generation"
-          ],
-          tips: [
-            "AI occasionally produces malformed JSON."
-          ]
-        }
-      ]);
-    }
+    res.status(200).json(question);
 
   } catch (error) {
 
     console.error(error);
 
-    return res.status(500).json({
+    res.status(500).json({
       error:
         error.message ||
         "Generation failed"
